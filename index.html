@@ -6,21 +6,35 @@
 <title>Macro & Calorie Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+  /* --- THEME DEFINITIONS --- */
+  body.theme-light-normal {
+    --bg: #F8F9FA; --card: #FFFFFF; --border: #E5E7EB; --text: #111111;
+    --gray: #6B7280; --lightgray: #9CA3AF; --accent: #3B82F6; --banner-bg: rgba(59,130,246,0.1); --input-bg: #FAFAFA;
+  }
+  body.theme-light-blue {
+    --bg: #F0F9FF; --card: #FFFFFF; --border: #BAE6FD; --text: #0C4A6E;
+    --gray: #0369A1; --lightgray: #38BDF8; --accent: #0284C7; --banner-bg: rgba(2,132,199,0.1); --input-bg: #F8FAFC;
+  }
+  body.theme-light-pink {
+    --bg: #FFF5F7; --card: #FFFFFF; --border: #FCE7F3; --text: #1F2937;
+    --gray: #6B7280; --lightgray: #9CA3AF; --accent: #EC4899; --banner-bg: rgba(236,72,153,0.1); --input-bg: #FFFFFF;
+  }
+  body.theme-dark-normal {
+    --bg: #0F172A; --card: #1E293B; --border: #334155; --text: #F8FAFC;
+    --gray: #94A3B8; --lightgray: #64748B; --accent: #3B82F6; --banner-bg: rgba(59,130,246,0.15); --input-bg: #0F172A;
+  }
+  body.theme-dark-blue {
+    --bg: #030712; --card: #111827; --border: #1F2937; --text: #F3F4F6;
+    --gray: #9CA3AF; --lightgray: #4B5563; --accent: #60A5FA; --banner-bg: rgba(96,165,250,0.15); --input-bg: #030712;
+  }
+  body.theme-dark-pink {
+    --bg: #0A0508; --card: #160D14; --border: #2D1A2A; --text: #FDF2F8;
+    --gray: #D1D5DB; --lightgray: #6B7280; --accent: #F472B6; --banner-bg: rgba(244,114,182,0.15); --input-bg: #0A0508;
+  }
+
   :root {
-    --bg: #FFF5F7;
-    --card: #FFFFFF;
-    --border: #FCE7F3;
-    --text: #1F2937;
-    --gray: #6B7280;
-    --lightgray: #9CA3AF;
-    --red: #E11D48;
-    --pink: #EC4899;
-    --pink-light: #F472B6;
-    --green: #10B981;
-    --yellow: #F59E0B;
-    --purple: #8B5CF6;
-    --orange: #F97316;
-    --shadow: 0 4px 12px rgba(236, 72, 153, 0.08);
+    --red: #E11D48; --green: #10B981; --yellow: #F59E0B; --purple: #8B5CF6; --orange: #F97316;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -32,6 +46,7 @@
     font-size: 13px;
     line-height: 1.6;
     padding: 20px;
+    transition: background 0.3s, color 0.3s;
   }
 
   .container {
@@ -56,11 +71,29 @@
     font-weight: 600;
   }
   .page-header h1 {
-    font-family: 'Blue Cashews', 'Poppins', sans-serif;
     font-size: 24px;
     font-weight: 700;
-    color: var(--pink);
+    color: var(--accent);
     letter-spacing: -0.02em;
+  }
+  .header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  /* --- THEME SELECTOR DROPDOWN --- */
+  #theme-selector {
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text);
+    background: var(--card);
+    outline: none;
+    cursor: pointer;
   }
 
   /* --- NOTIFICATION BANNER --- */
@@ -75,14 +108,14 @@
     box-shadow: var(--shadow);
   }
   #status-banner.success {
-    background: rgba(16, 185, 129, 0.1);
+    background: rgba(16, 185, 129, 0.15);
     color: #047857;
-    border: 1px solid rgba(16, 185, 129, 0.2);
+    border: 1px solid rgba(16, 185, 129, 0.3);
   }
   #status-banner.warning {
-    background: rgba(225, 29, 72, 0.1);
+    background: rgba(225, 29, 72, 0.15);
     color: var(--red);
-    border: 1px solid rgba(225, 29, 72, 0.2);
+    border: 1px solid rgba(225, 29, 72, 0.3);
   }
 
   /* --- CARDS & GRIDS --- */
@@ -93,6 +126,7 @@
     padding: 16px;
     box-shadow: var(--shadow);
     margin-bottom: 16px;
+    transition: background 0.3s, border 0.3s;
   }
   .card-label {
     font-size: 9px;
@@ -123,12 +157,12 @@
     font-family: 'Poppins', sans-serif;
     font-size: 12px;
     color: var(--text);
-    background: #FFFFFF;
+    background: var(--input-bg);
     outline: none;
     transition: border-color 0.2s;
   }
   input:focus, select:focus {
-    border-color: var(--pink);
+    border-color: var(--accent);
   }
 
   .btn {
@@ -144,7 +178,7 @@
     transition: opacity 0.2s;
   }
   .btn:hover { opacity: 0.9; }
-  .btn-pink { background: var(--pink); color: white; }
+  .btn-accent { background: var(--accent); color: white; }
   .btn-green { background: var(--green); color: white; }
   .btn-red { background: var(--red); color: white; }
 
@@ -157,7 +191,7 @@
     box-shadow: var(--shadow);
     text-align: center;
     margin-bottom: 16px;
-    border-top: 4px solid var(--pink);
+    border-top: 4px solid var(--accent);
   }
   .hero-stat-number {
     font-size: 48px;
@@ -205,7 +239,7 @@
   .stat-box.accent-yellow { border-top: 3px solid var(--yellow); }
   .stat-box.accent-purple { border-top: 3px solid var(--purple); }
   .stat-box.accent-orange { border-top: 3px solid var(--orange); }
-  .stat-box.accent-pink { border-top: 3px solid var(--pink); }
+  .stat-box.accent-accent { border-top: 3px solid var(--accent); }
 
   /* --- LOGGED MEALS LIST --- */
   .meal-item {
@@ -213,7 +247,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 8px 10px;
-    background: #FFF1F2;
+    background: var(--input-bg);
     border: 1px solid var(--border);
     border-radius: 8px;
     margin-bottom: 6px;
@@ -259,7 +293,7 @@
   }
 </style>
 </head>
-<body>
+<body class="theme-light-normal">
 
 <div class="container">
   
@@ -269,7 +303,18 @@
       <span>Daily Nutrition Tracker</span>
       <h1>Macro & Calorie Counter</h1>
     </div>
-    <button class="btn btn-red" onclick="resetDay()">Reset Day</button>
+    <div class="header-actions">
+      <!-- Theme Dropdown Switcher -->
+      <select id="theme-selector" onchange="changeTheme(this.value)">
+        <option value="theme-light-normal">Light [Normal]</option>
+        <option value="theme-light-blue">Light [Blue]</option>
+        <option value="theme-light-pink">Light [Pink]</option>
+        <option value="theme-dark-normal">Dark [Normal]</option>
+        <option value="theme-dark-blue">Dark [Blue]</option>
+        <option value="theme-dark-pink">Dark [Pink]</option>
+      </select>
+      <button class="btn btn-red" onclick="resetDay()">Reset Day</button>
+    </div>
   </div>
 
   <!-- Notification Banner -->
@@ -292,7 +337,7 @@
       </div>
 
       <div id="log-inputs"></div>
-      <button class="btn btn-pink" style="width: 100%; margin-top: 4px;" onclick="logConsumption()">Subtract Consumed</button>
+      <button class="btn btn-accent" style="width: 100%; margin-top: 4px;" onclick="logConsumption()">Subtract Consumed</button>
     </div>
 
     <!-- Management Panel: Goals & Custom Macros -->
@@ -330,7 +375,7 @@
 
 <script>
   let trackerData = {
-    calories: { name: 'Calories', goal: 2000, remaining: 2000, unit: 'kcal', color: 'accent-pink', icon: '<svg class="icon" viewBox="0 0 24 24"><path d="M17.66 11.2C17.43 10.9 17.15 10.63 16.89 10.38C16.22 9.78 15.62 9.11 15.13 8.34C14.36 7.13 14 5.77 14 4.5C14 3.67 13.33 3 12.5 3C11.67 3 11 3.67 11 4.5C11 5.92 10.5 7.42 9.62 8.78C8.75 10.13 7.5 11.38 6.5 12.63C5.17 14.38 4.5 16.5 4.5 18.5C4.5 21 6.5 23 9 23H15C17.5 23 19.5 21 19.5 18.5C19.5 15.88 18.8 13.36 17.66 11.2Z"/></svg>' },
+    calories: { name: 'Calories', goal: 2000, remaining: 2000, unit: 'kcal', color: 'accent-accent', icon: '<svg class="icon" viewBox="0 0 24 24"><path d="M17.66 11.2C17.43 10.9 17.15 10.63 16.89 10.38C16.22 9.78 15.62 9.11 15.13 8.34C14.36 7.13 14 5.77 14 4.5C14 3.67 13.33 3 12.5 3C11.67 3 11 3.67 11 4.5C11 5.92 10.5 7.42 9.62 8.78C8.75 10.13 7.5 11.38 6.5 12.63C5.17 14.38 4.5 16.5 4.5 18.5C4.5 21 6.5 23 9 23H15C17.5 23 19.5 21 19.5 18.5C19.5 15.88 18.8 13.36 17.66 11.2Z"/></svg>' },
     protein: { name: 'Protein', goal: 150, remaining: 150, unit: 'g', color: 'accent-green', icon: '<svg class="icon" viewBox="0 0 24 24"><path d="M20.5 3L20.34 3.03C19.84 3.14 19.5 3.61 19.61 4.11L20.08 6.22L17.5 8.8L12.55 3.85L14.66 1.39C14.96 0.89 14.49 0.39 13.99 0.5L13.5 0.61L11.2 2.91C10.8 3.31 10.8 3.94 11.2 4.34L13.16 6.3L8.3 11.16C7.5 11.96 6.5 12.5 5.5 13.06V15.5C5.5 16.33 6.17 17 7 17H8.5V20.5C8.5 21.33 9.17 22 10 22H11.5C12.33 22 13 21.33 13 20.5V17.5C13.88 16.8 14.66 16 15.3 15.3L20.16 20.16C20.56 20.56 21.19 20.56 21.59 20.16L23.89 17.86C24.29 17.46 24.29 16.83 23.89 16.43L19.03 11.57C19.79 10.27 20.19 8.78 20.19 7.31L22.5 5.01C22.9 4.61 22.9 3.98 22.5 3.58L21.42 2.5C21.17 2.25 20.83 2.15 20.5 3Z"/></svg>' },
     carbs: { name: 'Carbs', goal: 200, remaining: 200, unit: 'g', color: 'accent-yellow', icon: '<svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2ZM11 6H13V11H18V13H13V18H11V13H6V11H11V6Z"/></svg>' },
     fat: { name: 'Fat', goal: 65, remaining: 65, unit: 'g', color: 'accent-purple', icon: '<svg class="icon" viewBox="0 0 24 24"><path d="M12 2.69L16.31 7C18.96 9.65 18.96 13.91 16.31 16.56C13.66 19.21 9.4 19.21 6.75 16.56C4.1 13.91 4.1 9.65 6.75 7L12 2.69Z"/></svg>' }
@@ -339,7 +384,16 @@
   let loggedMealsHistory = [];
 
   function initApp() {
+    const savedTheme = localStorage.getItem('tracker_theme') || 'theme-light-normal';
+    document.body.className = savedTheme;
+    const selector = document.getElementById('theme-selector');
+    if (selector) selector.value = savedTheme;
     renderUI();
+  }
+
+  function changeTheme(themeName) {
+    document.body.className = themeName;
+    localStorage.setItem('tracker_theme', themeName);
   }
 
   function renderUI() {
@@ -347,6 +401,8 @@
     const macrosGridContainer = document.getElementById('macros-grid-container');
     const logInputsContainer = document.getElementById('log-inputs');
     const macroGoalsContainer = document.getElementById('macro-goals-inputs');
+
+    if (!heroCaloriesContainer) return;
 
     heroCaloriesContainer.innerHTML = '';
     macrosGridContainer.innerHTML = '';
@@ -436,6 +492,8 @@
 
   function renderMealHistory() {
     const historyContainer = document.getElementById('logged-meals-list');
+    if (!historyContainer) return;
+
     if (loggedMealsHistory.length === 0) {
       historyContainer.innerHTML = 'No meals logged yet today.';
       historyContainer.style.fontStyle = 'italic';
@@ -488,7 +546,7 @@
     }
 
     let key = name.toLowerCase().replace(/\s+/g, '_');
-    const colors = ['accent-pink', 'accent-green', 'accent-yellow', 'accent-purple', 'accent-orange'];
+    const colors = ['accent-accent', 'accent-green', 'accent-yellow', 'accent-purple', 'accent-orange'];
     let randomColor = colors[Math.floor(Math.random() * colors.length)];
 
     trackerData[key] = {
@@ -515,6 +573,8 @@
 
   function checkStatus() {
     const banner = document.getElementById('status-banner');
+    if (!banner) return;
+    
     let anyOver = false;
     let isCompletelyZero = true;
 
