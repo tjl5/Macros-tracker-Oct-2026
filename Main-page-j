@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Macro & Calorie Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FFF5F7;
+    --card: #FFFFFF;
+    --border: #FCE7F3;
+    --text: #1F2937;
+    --gray: #6B7280;
+    --lightgray: #9CA3AF;
+    --red: #E11D48;
+    --pink: #EC4899;
+    --pink-light: #F472B6;
+    --green: #10B981;
+    --yellow: #F59E0B;
+    --purple: #8B5CF6;
+    --orange: #F97316;
+    --shadow: 0 4px 12px rgba(236, 72, 153, 0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 13px;
+    line-height: 1.6;
+    padding: 20px;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  /* --- HEADER --- */
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+  .page-header span {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--lightgray);
+    font-weight: 600;
+  }
+  .page-header h1 {
+    font-family: 'Blue Cashews', 'Poppins', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--pink);
+    letter-spacing: -0.02em;
+  }
+
+  /* --- NOTIFICATION BANNER --- */
+  #status-banner {
+    display: none;
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    font-weight: 600;
+    font-size: 12px;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+  #status-banner.success {
+    background: rgba(16, 185, 129, 0.1);
+    color: #047857;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+  }
+  #status-banner.warning {
+    background: rgba(225, 29, 72, 0.1);
+    color: var(--red);
+    border: 1px solid rgba(225, 29, 72, 0.2);
+  }
+
+  /* --- CARDS & GRIDS --- */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+  }
+  .card-label {
+    font-size: 9px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--lightgray);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  /* --- INPUTS & BUTTONS --- */
+  .input-group {
+    margin-bottom: 10px;
+  }
+  .input-group label {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--gray);
+    margin-bottom: 4px;
+  }
+  input, select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    color: var(--text);
+    background: #FFFFFF;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input:focus, select:focus {
+    border-color: var(--pink);
+  }
+
+  .btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    transition: opacity 0.2s;
+  }
+  .btn:hover { opacity: 0.9; }
+  .btn-pink { background: var(--pink); color: white; }
+  .btn-green { background: var(--green); color: white; }
+  .btn-red { background: var(--red); color: white; }
+
+  /* --- STAT BOXES --- */
+  .hero-stat-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    text-align: center;
+    margin-bottom: 16px;
+    border-top: 4px solid var(--pink);
+  }
+  .hero-stat-number {
+    font-size: 48px;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    font-family: 'DM Mono', monospace;
+  }
+  
+  .macros-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .stat-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+  .stat-number {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    font-family: 'DM Mono', monospace;
+  }
+  .stat-desc {
+    font-size: 9px;
+    color: var(--lightgray);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+  
+  .stat-box.accent-green { border-top: 3px solid var(--green); }
+  .stat-box.accent-yellow { border-top: 3px solid var(--yellow); }
+  .stat-box.accent-purple { border-top: 3px solid var(--purple); }
+  .stat-box.accent-orange { border-top: 3px solid var(--orange); }
+  .stat-box.accent-pink { border-top: 3px solid var(--pink); }
+
+  /* --- LOGGED MEALS LIST --- */
+  .meal-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    background: #FFF1F2;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 6px;
+    font-size: 11.5px;
+  }
+  .meal-item span strong {
+    color: var(--text);
+  }
+  .meal-details {
+    color: var(--gray);
+    font-size: 10.5px;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 16px 0;
+  }
+
+  .flex-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .icon {
+    width: 12px;
+    height: 12px;
+    fill: currentColor;
+    vertical-align: middle;
+  }
+
+  /* --- FOOTER --- */
+  .app-footer {
+    text-align: center;
+    margin-top: 24px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--gray);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <span>Daily Nutrition Tracker</span>
+      <h1>Macro & Calorie Counter</h1>
+    </div>
+    <button class="btn btn-red" onclick="resetDay()">Reset Day</button>
+  </div>
+
+  <!-- Notification Banner -->
+  <div id="status-banner"></div>
+
+  <!-- Top Hero Calories Box -->
+  <div id="hero-calories-container"></div>
+
+  <!-- Bottom Macros Grid -->
+  <div id="macros-grid-container" class="macros-grid"></div>
+
+  <div class="grid-2">
+    <!-- Log Food/Macros Form -->
+    <div class="card">
+      <div class="card-label">Log Consumed Food</div>
+      
+      <div class="input-group">
+        <label>Meal / Snack Name</label>
+        <input type="text" id="log-meal-name" placeholder="e.g. Pasta, Chicken Rice...">
+      </div>
+
+      <div id="log-inputs"></div>
+      <button class="btn btn-pink" style="width: 100%; margin-top: 4px;" onclick="logConsumption()">Subtract Consumed</button>
+    </div>
+
+    <!-- Management Panel: Goals & Custom Macros -->
+    <div class="card">
+      <div class="card-label">Configure Goals & Macros</div>
+      <div class="input-group">
+        <label>Calorie Goal (kcal)</label>
+        <input type="number" id="goal-calories" value="2000" onchange="updateGoals()">
+      </div>
+      <div id="macro-goals-inputs"></div>
+      <div class="divider"></div>
+      <div class="card-label" style="margin-bottom: 6px;">Add New Macro Tracker</div>
+      <div class="flex-row">
+        <input type="text" id="new-macro-name" placeholder="Macro Name (e.g. Fiber)">
+        <input type="number" id="new-macro-goal" placeholder="Goal (g)" style="width: 100px;">
+        <button class="btn btn-green" onclick="addCustomMacro()">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- History Section -->
+  <div class="card">
+    <div class="card-label">Logged Meals & Snacks Today</div>
+    <div id="logged-meals-list" style="color: var(--lightgray); font-style: italic; font-size: 11.5px;">
+      No meals logged yet today.
+    </div>
+  </div>
+
+  <!-- Footer Section -->
+  <div class="app-footer">
+    made with love for you J ♥
+  </div>
+
+</div>
+
+<script>
+  let trackerData = {
+    calories: { name: 'Calories', goal: 2000, remaining: 2000, unit: 'kcal', color: 'accent-pink', icon: '<svg class="icon" viewBox="0 0 24 24"><path d="M17.66 11.2C17.43 10.9 17.15 10.63 16.89 10.38C16.22 9.78 15.62 9.11 15.13 8.34C14.36 7.13 14 5.77 14 4.5C14 3.67 13.33 3 12.5 3C11.67 3 11 3.67 11 4.5C11 5.92 10.5 7.42 9.62 8.78C8.75 10.13 7.5 11.38 6.5 12.63C5.17 14.38 4.5 16.5 4.5 18.5C4.5 21 6.5 23 9 23H15C17.5 23 19.5 21 19.5 18.5C19.5 15.88 18.8 13.36 17.66 11.2Z"/></svg>' },
+    protein: { name: 'Protein', goal: 150, remaining: 150, unit: 'g', color: 'accent-green', icon: '<svg class="icon" viewBox="0 0 24 24"><path d="M20.5 3L20.34 3.03C19.84 3.14 19.5 3.61 19.61 4.11L20.08 6.22L17.5 8.8L12.55 3.85L14.66 1.39C14.96 0.89 14.49 0.39 13.99 0.5L13.5 0.61L11.2 2.91C10.8 3.31 10.8 3.94 11.2 4.34L13.16 6.3L8.3 11.16C7.5 11.96 6.5 12.5 5.5 13.06V15.5C5.5 16.33 6.17 17 7 17H8.5V20.5C8.5 21.33 9.17 22 10 22H11.5C12.33 22 13 21.33 13 20.5V17.5C13.88 16.8 14.66 16 15.3 15.3L20.16 20.16C20.56 20.56 21.19 20.56 21.59 20.16L23.89 17.86C24.29 17.46 24.29 16.83 23.89 16.43L19.03 11.57C19.79 10.27 20.19 8.78 20.19 7.31L22.5 5.01C22.9 4.61 22.9 3.98 22.5 3.58L21.42 2.5C21.17 2.25 20.83 2.15 20.5 3Z"/></svg>' },
+    carbs: { name: 'Carbs', goal: 200, remaining: 200, unit: 'g', color: 'accent-yellow', icon: '<svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2ZM11 6H13V11H18V13H13V18H11V13H6V11H11V6Z"/></svg>' },
+    fat: { name: 'Fat', goal: 65, remaining: 65, unit: 'g', color: 'accent-purple', icon: '<svg class="icon" viewBox="0 0 24 24"><path d="M12 2.69L16.31 7C18.96 9.65 18.96 13.91 16.31 16.56C13.66 19.21 9.4 19.21 6.75 16.56C4.1 13.91 4.1 9.65 6.75 7L12 2.69Z"/></svg>' }
+  };
+
+  let loggedMealsHistory = [];
+
+  function initApp() {
+    renderUI();
+  }
+
+  function renderUI() {
+    const heroCaloriesContainer = document.getElementById('hero-calories-container');
+    const macrosGridContainer = document.getElementById('macros-grid-container');
+    const logInputsContainer = document.getElementById('log-inputs');
+    const macroGoalsContainer = document.getElementById('macro-goals-inputs');
+
+    heroCaloriesContainer.innerHTML = '';
+    macrosGridContainer.innerHTML = '';
+    logInputsContainer.innerHTML = '';
+    macroGoalsContainer.innerHTML = '';
+
+    const cal = trackerData.calories;
+    heroCaloriesContainer.innerHTML = `
+      <div class="hero-stat-box">
+        <div class="hero-stat-number" style="color: ${cal.remaining < 0 ? 'var(--red)' : 'var(--text)'}">${cal.remaining}</div>
+        <div class="stat-desc" style="font-size: 10px; margin-top: 6px;">${cal.icon} ${cal.name} Left (${cal.unit})</div>
+      </div>
+    `;
+
+    logInputsContainer.innerHTML += `
+      <div class="input-group">
+        <label>Calories (kcal)</label>
+        <input type="number" id="log-calories" value="0" min="0">
+      </div>
+    `;
+
+    for (let key in trackerData) {
+      if (key === 'calories') continue;
+      let m = trackerData[key];
+
+      macrosGridContainer.innerHTML += `
+        <div class="stat-box ${m.color}">
+          <div class="stat-number" style="color: ${m.remaining < 0 ? 'var(--red)' : 'inherit'}">${m.remaining}</div>
+          <div class="stat-desc">${m.icon} ${m.name} Left (${m.unit})</div>
+        </div>
+      `;
+
+      logInputsContainer.innerHTML += `
+        <div class="input-group">
+          <label>${m.name} (${m.unit})</label>
+          <input type="number" id="log-${key}" value="0" min="0">
+        </div>
+      `;
+
+      macroGoalsContainer.innerHTML += `
+        <div class="input-group">
+          <label>${m.name} Goal (${m.unit})</label>
+          <input type="number" id="goal-${key}" value="${m.goal}" onchange="updateMacroGoal('${key}', this.value)">
+        </div>
+      `;
+    }
+
+    renderMealHistory();
+    checkStatus();
+  }
+
+  function logConsumption() {
+    const mealNameInput = document.getElementById('log-meal-name');
+    let mealName = mealNameInput.value.trim() || 'Unnamed Meal/Snack';
+
+    let loggedEntry = { name: mealName, details: [] };
+
+    const calInput = document.getElementById('log-calories');
+    let calVal = Number(calInput.value) || 0;
+    if (calVal > 0) {
+      trackerData.calories.remaining -= calVal;
+      loggedEntry.details.push(`${calVal} kcal`);
+    }
+    calInput.value = '0';
+
+    for (let key in trackerData) {
+      if (key === 'calories') continue;
+      const input = document.getElementById(`log-${key}`);
+      if (input) {
+        let val = Number(input.value) || 0;
+        if (val > 0) {
+          trackerData[key].remaining -= val;
+          loggedEntry.details.push(`${val}${trackerData[key].unit} ${trackerData[key].name}`);
+        }
+        input.value = '0';
+      }
+    }
+
+    mealNameInput.value = '';
+
+    if (loggedEntry.details.length > 0) {
+      loggedMealsHistory.push(loggedEntry);
+    }
+
+    renderUI();
+  }
+
+  function renderMealHistory() {
+    const historyContainer = document.getElementById('logged-meals-list');
+    if (loggedMealsHistory.length === 0) {
+      historyContainer.innerHTML = 'No meals logged yet today.';
+      historyContainer.style.fontStyle = 'italic';
+      historyContainer.style.color = 'var(--lightgray)';
+      return;
+    }
+
+    historyContainer.style.fontStyle = 'normal';
+    historyContainer.style.color = 'var(--text)';
+    historyContainer.innerHTML = '';
+
+    loggedMealsHistory.forEach((item, index) => {
+      historyContainer.innerHTML += `
+        <div class="meal-item">
+          <div>
+            <strong>${index + 1}. ${item.name}</strong>
+            <div class="meal-details">${item.details.join(', ')}</div>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  function updateGoals() {
+    const newCalGoal = Number(document.getElementById('goal-calories').value);
+    const diff = newCalGoal - trackerData.calories.goal;
+    trackerData.calories.goal = newCalGoal;
+    trackerData.calories.remaining += diff;
+    renderUI();
+  }
+
+  function updateMacroGoal(key, val) {
+    const newGoal = Number(val);
+    const diff = newGoal - trackerData[key].goal;
+    trackerData[key].goal = newGoal;
+    trackerData[key].remaining += diff;
+    renderUI();
+  }
+
+  function addCustomMacro() {
+    const nameInput = document.getElementById('new-macro-name');
+    const goalInput = document.getElementById('new-macro-goal');
+    
+    let name = nameInput.value.trim();
+    let goal = Number(goalInput.value);
+
+    if (!name || !goal) {
+      alert('Please enter a valid macro name and goal amount.');
+      return;
+    }
+
+    let key = name.toLowerCase().replace(/\s+/g, '_');
+    const colors = ['accent-pink', 'accent-green', 'accent-yellow', 'accent-purple', 'accent-orange'];
+    let randomColor = colors[Math.floor(Math.random() * colors.length)];
+
+    trackerData[key] = {
+      name: name,
+      goal: goal,
+      remaining: goal,
+      unit: 'g',
+      color: randomColor,
+      icon: '<svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V11H13V17ZM13 9H11V7H13V9Z"/></svg>'
+    };
+
+    nameInput.value = '';
+    goalInput.value = '';
+    renderUI();
+  }
+
+  function resetDay() {
+    for (let key in trackerData) {
+      trackerData[key].remaining = trackerData[key].goal;
+    }
+    loggedMealsHistory = [];
+    renderUI();
+  }
+
+  function checkStatus() {
+    const banner = document.getElementById('status-banner');
+    let anyOver = false;
+    let isCompletelyZero = true;
+
+    for (let key in trackerData) {
+      if (trackerData[key].remaining < 0) {
+        anyOver = true;
+      }
+      if (trackerData[key].remaining !== 0) {
+        isCompletelyZero = false;
+      }
+    }
+
+    if (anyOver) {
+      banner.style.display = 'block';
+      banner.className = 'warning';
+      banner.innerHTML = '⚠️ Warning: You have gone over one or more of your macro/calorie targets!';
+    } else if (isCompletelyZero) {
+      banner.style.display = 'block';
+      banner.className = 'success';
+      banner.innerHTML = '🎉 Congratulations! You have hit all your macro and calorie targets perfectly for the day!';
+    } else {
+      banner.style.display = 'none';
+    }
+  }
+
+  window.onload = initApp;
+</script>
+
+</body>
+</html>
